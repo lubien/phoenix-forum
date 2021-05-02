@@ -6,7 +6,11 @@ defmodule PhoenixForumWeb.ThreadLiveTest do
   alias PhoenixForum.Forum
 
   @create_attrs %{author: "some author", content: "some content", title: "some title"}
-  @update_attrs %{author: "some updated author", content: "some updated content", title: "some updated title"}
+  @update_attrs %{
+    author: "some updated author",
+    content: "some updated content",
+    title: "some updated title"
+  }
   @invalid_attrs %{author: nil, content: nil, title: nil}
 
   defp fixture(:thread) do
@@ -26,26 +30,26 @@ defmodule PhoenixForumWeb.ThreadLiveTest do
       {:ok, _index_live, html} = live(conn, Routes.thread_index_path(conn, :index))
 
       assert html =~ "Listing Threads"
-      assert html =~ thread.author
+      assert html =~ thread.title
     end
 
     test "saves new thread", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, Routes.thread_index_path(conn, :index))
 
-      assert index_live |> element("a", "New Thread") |> render_click() =~
-               "New Thread"
+      {:ok, form_live, _html} =
+        index_live |> element("#new-thread") |> render_click() |> follow_redirect(conn)
 
-      assert_patch(index_live, Routes.thread_index_path(conn, :new))
+      assert_redirected(index_live, Routes.thread_form_path(conn, :new))
 
-      assert index_live
+      assert form_live
              |> form("#thread-form", thread: @invalid_attrs)
-             |> render_change() =~ "can&apos;t be blank"
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
-        index_live
+        form_live
         |> form("#thread-form", thread: @create_attrs)
         |> render_submit()
-        |> follow_redirect(conn, Routes.thread_index_path(conn, :index))
+        |> follow_redirect(conn)
 
       assert html =~ "Thread created successfully"
       assert html =~ "some author"
@@ -54,20 +58,23 @@ defmodule PhoenixForumWeb.ThreadLiveTest do
     test "updates thread in listing", %{conn: conn, thread: thread} do
       {:ok, index_live, _html} = live(conn, Routes.thread_index_path(conn, :index))
 
-      assert index_live |> element("#thread-#{thread.id} a", "Edit") |> render_click() =~
-               "Edit Thread"
+      {:ok, edit_live, _html} =
+        index_live
+        |> element("#thread-#{thread.id} a.edit-thread", "Edit")
+        |> render_click()
+        |> follow_redirect(conn)
 
-      assert_patch(index_live, Routes.thread_index_path(conn, :edit, thread))
+      assert_redirected(index_live, Routes.thread_form_path(conn, :edit, thread))
 
-      assert index_live
+      assert edit_live
              |> form("#thread-form", thread: @invalid_attrs)
-             |> render_change() =~ "can&apos;t be blank"
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
-        index_live
+        edit_live
         |> form("#thread-form", thread: @update_attrs)
         |> render_submit()
-        |> follow_redirect(conn, Routes.thread_index_path(conn, :index))
+        |> follow_redirect(conn, Routes.thread_show_path(conn, :show, thread))
 
       assert html =~ "Thread updated successfully"
       assert html =~ "some updated author"
@@ -91,20 +98,20 @@ defmodule PhoenixForumWeb.ThreadLiveTest do
       assert html =~ thread.author
     end
 
-    test "updates thread within modal", %{conn: conn, thread: thread} do
+    test "updates thread using form", %{conn: conn, thread: thread} do
       {:ok, show_live, _html} = live(conn, Routes.thread_show_path(conn, :show, thread))
 
-      assert show_live |> element("a", "Edit") |> render_click() =~
-               "Edit Thread"
+      {:ok, edit_live, _html} =
+        show_live |> element("#thread-edit") |> render_click() |> follow_redirect(conn)
 
-      assert_patch(show_live, Routes.thread_show_path(conn, :edit, thread))
+      assert_redirected(show_live, Routes.thread_form_path(conn, :edit, thread))
 
-      assert show_live
+      assert edit_live
              |> form("#thread-form", thread: @invalid_attrs)
-             |> render_change() =~ "can&apos;t be blank"
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
-        show_live
+        edit_live
         |> form("#thread-form", thread: @update_attrs)
         |> render_submit()
         |> follow_redirect(conn, Routes.thread_show_path(conn, :show, thread))

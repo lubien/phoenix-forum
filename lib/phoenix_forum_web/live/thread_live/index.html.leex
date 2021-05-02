@@ -1,5 +1,5 @@
 <div>
-<%= live_redirect "New Thread", to: Routes.thread_form_path(@socket, :new), class: "btn float-right" %>
+<%= live_redirect "New Thread", id: "new-thread", to: Routes.thread_form_path(@socket, :new), class: "btn float-right" %>
 <h1>Listing Threads</h1>
 </div>
 
@@ -8,7 +8,7 @@
     <div class="float-right">
       <span><%= live_redirect "Details", to: Routes.thread_show_path(@socket, :show, thread.id) %></span>
       <span><%= comment_count %> replies</span>
-      <span><%= live_patch "Edit", to: Routes.thread_form_path(@socket, :edit, thread.id) %></span>
+      <span><%= live_redirect "Edit", to: Routes.thread_form_path(@socket, :edit, thread.id), class: "edit-thread" %></span>
       <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: thread.id, data: [confirm: "Are you sure?"] %></span>
     </div>
 
