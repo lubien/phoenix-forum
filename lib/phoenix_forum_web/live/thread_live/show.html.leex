@@ -21,3 +21,28 @@
 
 <span><%= live_redirect "Edit", to: Routes.thread_form_path(@socket, :edit, @thread), class: "button" %></span>
 <span><%= live_redirect "Back", to: Routes.thread_index_path(@socket, :index) %></span>
+
+<table>
+  <thead>
+    <tr>
+      <th>Author</th>
+      <th>Content</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="comments">
+    <%= for comment <- @comments do %>
+      <tr id="comment-<%= comment.id %>">
+        <td><%= comment.author %></td>
+        <td><%= comment.content %></td>
+
+        <td>
+          <span><%= live_redirect "Show", to: Routes.comment_show_path(@socket, :show, comment) %></span>
+          <span><%= live_patch "Edit", to: Routes.comment_index_path(@socket, :edit, comment) %></span>
+          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: comment.id, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

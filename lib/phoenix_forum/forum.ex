@@ -109,12 +109,12 @@ defmodule PhoenixForum.Forum do
 
   ## Examples
 
-      iex> list_comments()
+      iex> list_comments(query)
       [%Comment{}, ...]
 
   """
-  def list_comments do
-    Repo.all(Comment)
+  def list_comments(query \\ Comment) do
+    Repo.all(query)
   end
 
   @doc """
