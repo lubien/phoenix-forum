@@ -1,4 +1,12 @@
-<h1>Show Thread</h1>
+<div>
+  <div class="float-right">
+    <%= live_redirect "Edit", to: Routes.thread_form_path(@socket, :edit, @thread), class: "button" %>
+  </div>
+  <h1>
+
+    <%= @thread.title %> #<%= @thread.id %> - <%= @thread.author %>
+  </h1>
+</div>
 
 <%= if @live_action == :edit_comment do %>
   <%= live_modal @socket, PhoenixForumWeb.CommentLive.FormComponent,
@@ -10,51 +18,34 @@
     return_to: Routes.thread_show_path(@socket, :show, @thread.id) %>
 <% end %>
 
-<ul>
+<p>
+<%= @thread.content %>
+</p>
 
-  <li>
-    <strong>Title:</strong>
-    <%= @thread.title %>
-  </li>
+<hr>
 
-  <li>
-    <strong>Author:</strong>
-    <%= @thread.author %>
-  </li>
+<div>
+  <h2>Replies</h2>
 
-  <li>
-    <strong>Content:</strong>
-    <%= @thread.content %>
-  </li>
+  <%= if Enum.empty?(@comments) do %>
+    <div>No replies yet</div>
+  <% end %>
 
-</ul>
-
-<span><%= live_redirect "Edit", to: Routes.thread_form_path(@socket, :edit, @thread), class: "button" %></span>
-<span><%= live_redirect "Back", to: Routes.thread_index_path(@socket, :index) %></span>
-
-<table>
-  <thead>
-    <tr>
-      <th>Author</th>
-      <th>Content</th>
-
-      <th></th>
-    </tr>
-  </thead>
-  <tbody id="comments">
-    <%= for comment <- @comments do %>
-      <tr id="comment-<%= comment.id %>">
-        <td><%= comment.author %></td>
-        <td><%= comment.content %></td>
-
-        <td>
+  <%= for comment <- @comments do %>
+    <div id="comment-<%= comment.id %>">
+      <strong>
+        <div class="float-right">
           <span><%= live_patch "Edit", to: Routes.thread_show_path(@socket, :edit_comment, @thread.id, comment.id) %></span>
           <span><%= link "Delete", to: "#", phx_click: "delete_comment", phx_value_id: comment.id, data: [confirm: "Are you sure?"] %></span>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+        </div>
+        <%= comment.author %>
+      </strong>
+      <p><%= comment.content %></p>
+    </div>
+  <% end %>
+</div>
+
+<hr>
 
 <%= if @live_action == :show do %>
   <div>
