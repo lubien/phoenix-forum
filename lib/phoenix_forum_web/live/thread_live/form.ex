@@ -47,7 +47,7 @@ defmodule PhoenixForumWeb.ThreadLive.Form do
         {:noreply,
          socket
          |> put_flash(:info, "Thread updated successfully")
-         |> push_redirect(to: Routes.thread_show_path(socket, :edit, thread.id))}
+         |> push_redirect(to: Routes.thread_show_path(socket, :show, thread.id))}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
@@ -60,7 +60,7 @@ defmodule PhoenixForumWeb.ThreadLive.Form do
         {:noreply,
          socket
          |> put_flash(:info, "Thread created successfully")
-         |> push_redirect(to: Routes.thread_show_path(socket, :edit, thread.id))}
+         |> push_redirect(to: Routes.thread_show_path(socket, :show, thread.id))}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
