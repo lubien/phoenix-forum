@@ -39,7 +39,7 @@ defmodule PhoenixForumWeb.CommentLiveTest do
 
       assert index_live
              |> form("#comment-form", comment: @invalid_attrs)
-             |> render_change() =~ "can&apos;t be blank"
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
         index_live
@@ -61,7 +61,7 @@ defmodule PhoenixForumWeb.CommentLiveTest do
 
       assert index_live
              |> form("#comment-form", comment: @invalid_attrs)
-             |> render_change() =~ "can&apos;t be blank"
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
         index_live
@@ -101,7 +101,7 @@ defmodule PhoenixForumWeb.CommentLiveTest do
 
       assert show_live
              |> form("#comment-form", comment: @invalid_attrs)
-             |> render_change() =~ "can&apos;t be blank"
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
         show_live
