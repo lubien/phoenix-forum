@@ -11,15 +11,26 @@ defmodule PhoenixForumWeb.ThreadLive.Show do
   end
 
   @impl true
-  def handle_params(%{"id" => id}, _, socket) do
+  def handle_params(%{"id" => id} = params, _uri, socket) do
     thread = Forum.get_thread!(id)
-
     {:noreply,
-     socket
-     |> assign(:page_title, "Show Thread")
-     |> assign(:thread, thread)
-     |> assign(:comments, list_comments_for_thread(thread.id))
-     |> assign(:comment, %Comment{})}
+      socket
+      |> assign(:thread, thread)
+      |> assign(:comments, list_comments_for_thread(id))
+      |> apply_action(socket.assigns.live_action, params)
+    }
+  end
+
+  defp apply_action(socket, :edit_comment, %{"comment_id" => comment_id}) do
+    socket
+    |> assign(:page_title, "Edit Comment")
+    |> assign(:comment, Forum.get_comment!(comment_id))
+  end
+
+  defp apply_action(socket, :show, _params) do
+    socket
+    |> assign(:page_title, "Show Thread")
+    |> assign(:comment, %Comment{})
   end
 
   defp list_comments_for_thread(thread_id) do

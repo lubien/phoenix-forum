@@ -1,5 +1,15 @@
 <h1>Show Thread</h1>
 
+<%= if @live_action == :edit_comment do %>
+  <%= live_modal @socket, PhoenixForumWeb.CommentLive.FormComponent,
+    id: @comment.id,
+    title: "Editing comment",
+    action: :edit,
+    comment: @comment,
+    thread_id: @thread.id,
+    return_to: Routes.thread_show_path(@socket, :show, @thread.id) %>
+<% end %>
+
 <ul>
 
   <li>
@@ -39,7 +49,7 @@
 
         <td>
           <span><%= live_redirect "Show", to: Routes.comment_show_path(@socket, :show, comment) %></span>
-          <span><%= live_patch "Edit", to: Routes.comment_index_path(@socket, :edit, comment) %></span>
+          <span><%= live_patch "Edit", to: Routes.thread_show_path(@socket, :edit_comment, @thread.id, comment.id) %></span>
           <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: comment.id, data: [confirm: "Are you sure?"] %></span>
         </td>
       </tr>

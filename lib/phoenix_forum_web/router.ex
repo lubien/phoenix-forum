@@ -22,6 +22,7 @@ defmodule PhoenixForumWeb.Router do
     live "/threads/:id/edit", ThreadLive.Form, :edit
 
     live "/threads/:id", ThreadLive.Show, :show
+    live "/threads/:id/comment/:comment_id", ThreadLive.Show, :edit_comment
     live "/threads/:id/show/edit", ThreadLive.Show, :edit
 
     live "/comments", CommentLive.Index, :index
