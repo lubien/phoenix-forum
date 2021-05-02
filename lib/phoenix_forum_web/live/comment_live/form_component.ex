@@ -4,13 +4,15 @@ defmodule PhoenixForumWeb.CommentLive.FormComponent do
   alias PhoenixForum.Forum
 
   @impl true
-  def update(%{comment: comment} = assigns, socket) do
+  def update(%{comment: comment, thread_id: thread_id} = assigns, socket) do
     changeset = Forum.change_comment(comment)
 
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)}
+     |> assign(:thread_id, thread_id)
+     |> assign(:changeset, changeset)
+    }
   end
 
   @impl true
@@ -41,7 +43,8 @@ defmodule PhoenixForumWeb.CommentLive.FormComponent do
   end
 
   defp save_comment(socket, :new, comment_params) do
-    case Forum.create_comment(comment_params) do
+    params = Map.put(comment_params, "thread_id", socket.assigns.thread_id)
+    case Forum.create_comment(params) do
       {:ok, _comment} ->
         {:noreply,
          socket

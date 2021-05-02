@@ -46,3 +46,13 @@
     <% end %>
   </tbody>
 </table>
+
+<div>
+<%= live_component @socket, PhoenixForumWeb.CommentLive.FormComponent,
+    id: :new,
+    title: "Reply",
+    action: :new,
+    comment: @comment,
+    thread_id: @thread.id,
+    return_to: Routes.thread_show_path(@socket, :show, @thread.id) %>
+</div>

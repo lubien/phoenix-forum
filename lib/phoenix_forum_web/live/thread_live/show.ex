@@ -18,11 +18,12 @@ defmodule PhoenixForumWeb.ThreadLive.Show do
      socket
      |> assign(:page_title, "Show Thread")
      |> assign(:thread, thread)
-     |> assign(:comments, list_comments_for_thread(thread.id))}
+     |> assign(:comments, list_comments_for_thread(thread.id))
+     |> assign(:comment, %Comment{})}
   end
 
   defp list_comments_for_thread(thread_id) do
-    query = from c in Comment, where: c.thread_id > ^thread_id
+    query = from c in Comment, where: c.thread_id == ^thread_id
     Forum.list_comments(query)
   end
 end
