@@ -17,9 +17,7 @@ defmodule PhoenixForumWeb.Router do
   scope "/", PhoenixForumWeb do
     pipe_through :browser
 
-    live "/", PageLive, :index
-
-    live "/threads", ThreadLive.Index, :index
+    live "/", ThreadLive.Index, :index
     live "/threads/new", ThreadLive.Index, :new
     live "/threads/:id/edit", ThreadLive.Index, :edit
 
