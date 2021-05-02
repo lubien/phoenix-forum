@@ -22,6 +22,15 @@ defmodule PhoenixForum.Forum do
     Repo.all(Thread)
   end
 
+  @doc """
+  Returns the list of items with a thread and a comment count each.
+
+  ## Examples
+
+      iex> list_threads_with_comment_count()
+      [%{ thread: %Thread{}, comment_count: 0 }, ...]
+
+  """
   def list_threads_with_comment_count do
     count_query =
       from c in Comment,

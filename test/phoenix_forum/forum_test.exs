@@ -24,6 +24,13 @@ defmodule PhoenixForum.ForumTest do
       assert Forum.list_threads() == [thread]
     end
 
+    test "list_threads_with_comment_count/0 returns all threads with comment count" do
+      {thread, _comment} = comment_fixture()
+      assert Forum.list_threads_with_comment_count() == [%{
+        thread: thread, comment_count: 1
+      }]
+    end
+
     test "get_thread!/1 returns the thread with given id" do
       thread = thread_fixture()
       assert Forum.get_thread!(thread.id) == thread
