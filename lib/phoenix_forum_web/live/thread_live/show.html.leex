@@ -1,14 +1,5 @@
 <h1>Show Thread</h1>
 
-<%= if @live_action in [:edit] do %>
-  <%= live_modal @socket, PhoenixForumWeb.ThreadLive.FormComponent,
-    id: @thread.id,
-    title: @page_title,
-    action: @live_action,
-    thread: @thread,
-    return_to: Routes.thread_show_path(@socket, :show, @thread) %>
-<% end %>
-
 <ul>
 
   <li>
@@ -28,5 +19,5 @@
 
 </ul>
 
-<span><%= live_patch "Edit", to: Routes.thread_show_path(@socket, :edit, @thread), class: "button" %></span>
+<span><%= live_redirect "Edit", to: Routes.thread_form_path(@socket, :edit, @thread), class: "button" %></span>
 <span><%= live_redirect "Back", to: Routes.thread_index_path(@socket, :index) %></span>

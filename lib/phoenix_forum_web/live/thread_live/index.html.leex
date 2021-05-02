@@ -1,14 +1,5 @@
 <h1>Listing Threads</h1>
 
-<%= if @live_action in [:new, :edit] do %>
-  <%= live_modal @socket, PhoenixForumWeb.ThreadLive.FormComponent,
-    id: @thread.id || :new,
-    title: @page_title,
-    action: @live_action,
-    thread: @thread,
-    return_to: Routes.thread_index_path(@socket, :index) %>
-<% end %>
-
 <table>
   <thead>
     <tr>
@@ -27,8 +18,8 @@
         <td><%= thread.content %></td>
 
         <td>
-          <span><%= live_redirect "Show", to: Routes.thread_show_path(@socket, :show, thread) %></span>
-          <span><%= live_patch "Edit", to: Routes.thread_index_path(@socket, :edit, thread) %></span>
+          <span><%= live_redirect "Show", to: Routes.thread_show_path(@socket, :show, thread.id) %></span>
+          <span><%= live_patch "Edit", to: Routes.thread_form_path(@socket, :edit, thread.id) %></span>
           <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: thread.id, data: [confirm: "Are you sure?"] %></span>
         </td>
       </tr>
@@ -36,4 +27,4 @@
   </tbody>
 </table>
 
-<span><%= live_patch "New Thread", to: Routes.thread_index_path(@socket, :new) %></span>
+<span><%= live_patch "New Thread", to: Routes.thread_form_path(@socket, :new) %></span>

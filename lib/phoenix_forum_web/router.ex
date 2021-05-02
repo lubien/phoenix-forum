@@ -18,8 +18,8 @@ defmodule PhoenixForumWeb.Router do
     pipe_through :browser
 
     live "/", ThreadLive.Index, :index
-    live "/threads/new", ThreadLive.Index, :new
-    live "/threads/:id/edit", ThreadLive.Index, :edit
+    live "/threads/new", ThreadLive.Form, :new
+    live "/threads/:id/edit", ThreadLive.Form, :edit
 
     live "/threads/:id", ThreadLive.Show, :show
     live "/threads/:id/show/edit", ThreadLive.Show, :edit
