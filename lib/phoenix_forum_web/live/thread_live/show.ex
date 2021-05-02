@@ -33,6 +33,14 @@ defmodule PhoenixForumWeb.ThreadLive.Show do
     |> assign(:comment, %Comment{})
   end
 
+  @impl true
+  def handle_event("delete_comment", %{"id" => id}, socket) do
+    comment = Forum.get_comment!(id)
+    {:ok, _} = Forum.delete_comment(comment)
+
+    {:noreply, assign(socket, :comments, list_comments_for_thread(socket.assigns.thread.id))}
+  end
+
   defp list_comments_for_thread(thread_id) do
     query = from c in Comment, where: c.thread_id == ^thread_id
     Forum.list_comments(query)
