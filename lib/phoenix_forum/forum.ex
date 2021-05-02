@@ -7,6 +7,7 @@ defmodule PhoenixForum.Forum do
   alias PhoenixForum.Repo
 
   alias PhoenixForum.Forum.Thread
+  alias PhoenixForum.Forum.Comment
 
   @doc """
   Returns the list of threads.
@@ -19,6 +20,21 @@ defmodule PhoenixForum.Forum do
   """
   def list_threads do
     Repo.all(Thread)
+  end
+
+  def list_threads_with_comment_count do
+    count_query =
+      from c in Comment,
+      select: %{ thread_id: c.thread_id, count: count(c.id) },
+      group_by: [c.thread_id]
+
+    query =
+      from t in Thread,
+      left_join: sub in subquery(count_query),
+      on: sub.thread_id == t.id,
+      select: %{ thread: t, comment_count: coalesce(sub.count, 0) }
+
+    Repo.all(query)
   end
 
   @doc """

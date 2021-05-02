@@ -88,3 +88,25 @@
   display: block;
   margin: -1rem 0 2rem;
 }
+
+.btn {
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: .375rem .75rem;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.float-right {float: right }
+
+hr {
+  border-top: .1rem solid rgba(0, 0, 0, .5);
+}

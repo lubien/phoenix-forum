@@ -1,30 +1,20 @@
+<div>
+<%= live_redirect "New Thread", to: Routes.thread_form_path(@socket, :new), class: "btn float-right" %>
 <h1>Listing Threads</h1>
+</div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Author</th>
-      <th>Content</th>
+<%= for %{ thread: thread, comment_count: comment_count} <- @threads do %>
+  <div id="thread-<%= thread.id %>">
+    <div class="float-right">
+      <span><%= live_redirect "Details", to: Routes.thread_show_path(@socket, :show, thread.id) %></span>
+      <span><%= comment_count %> replies</span>
+      <span><%= live_patch "Edit", to: Routes.thread_form_path(@socket, :edit, thread.id) %></span>
+      <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: thread.id, data: [confirm: "Are you sure?"] %></span>
+    </div>
 
-      <th></th>
-    </tr>
-  </thead>
-  <tbody id="threads">
-    <%= for thread <- @threads do %>
-      <tr id="thread-<%= thread.id %>">
-        <td><%= thread.title %></td>
-        <td><%= thread.author %></td>
-        <td><%= thread.content %></td>
-
-        <td>
-          <span><%= live_redirect "Show", to: Routes.thread_show_path(@socket, :show, thread.id) %></span>
-          <span><%= live_patch "Edit", to: Routes.thread_form_path(@socket, :edit, thread.id) %></span>
-          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: thread.id, data: [confirm: "Are you sure?"] %></span>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+    <div><%= thread.title %></div>
+  </div>
+  <hr >
+<% end %>
 
 <span><%= live_patch "New Thread", to: Routes.thread_form_path(@socket, :new) %></span>

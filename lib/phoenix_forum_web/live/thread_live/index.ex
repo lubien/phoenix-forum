@@ -20,6 +20,6 @@ defmodule PhoenixForumWeb.ThreadLive.Index do
   end
 
   defp list_threads do
-    Forum.list_threads()
+    Forum.list_threads_with_comment_count()
   end
 end
