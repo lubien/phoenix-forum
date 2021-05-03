@@ -3,7 +3,8 @@
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
+  * We assume there's a PostgreSQL database called "phoenix_forum_dev" with username and password "postgres" on localhost at port 5432 but you could change that on `config/dev.exs` if you want.
+  * Create and migrate your database with `mix ecto.setup` (this will create the DB, migrate and seed it)
   * Install Node.js dependencies with `npm install` inside the `assets` directory
   * Start Phoenix endpoint with `mix phx.server`
 

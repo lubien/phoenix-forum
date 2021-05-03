@@ -1,0 +1,60 @@
+<div>
+  <div class="float-right">
+    <%= live_redirect "Edit", id: "thread-edit", to: Routes.thread_form_path(@socket, :edit, @thread), class: "button" %>
+  </div>
+  <h1>
+
+    <%= @thread.title %> #<%= @thread.id %> - <%= @thread.author %>
+  </h1>
+</div>
+
+<%= if @live_action == :edit_comment do %>
+  <%= live_modal @socket, PhoenixForumWeb.CommentLive.FormComponent,
+    id: @comment.id,
+    title: "Editing comment",
+    action: :edit,
+    comment: @comment,
+    thread_id: @thread.id,
+    return_to: Routes.thread_show_path(@socket, :show, @thread.id) %>
+<% end %>
+
+<p>
+<%= @thread.content %>
+</p>
+
+<hr>
+
+<div>
+  <h2>Replies</h2>
+
+  <%= if Enum.empty?(@comments) do %>
+    <div>No replies yet</div>
+  <% end %>
+
+  <%= for comment <- @comments do %>
+    <div id="comment-<%= comment.id %>">
+      <strong>
+        <div class="float-right">
+          <span><%= live_patch "Edit", to: Routes.thread_show_path(@socket, :edit_comment, @thread.id, comment.id), class: "edit-comment" %></span>
+          <span><%= link "Delete", to: "#", phx_click: "delete_comment", phx_value_id: comment.id, data: [confirm: "Are you sure?"] %></span>
+        </div>
+        <%= comment.author %>
+      </strong>
+      <p><%= comment.content %></p>
+    </div>
+  <% end %>
+</div>
+
+<hr>
+
+<%= if @live_action == :show do %>
+  <div>
+  <%= live_component @socket, PhoenixForumWeb.CommentLive.FormComponent,
+      id: :new,
+      title: "Reply",
+      action: :new,
+      comment: @comment,
+      thread_id: @thread.id,
+      return_to: Routes.thread_show_path(@socket, :show, @thread.id) %>
+  </div>
+<% end %>

@@ -17,7 +17,13 @@ defmodule PhoenixForumWeb.Router do
   scope "/", PhoenixForumWeb do
     pipe_through :browser
 
-    live "/", PageLive, :index
+    live "/", ThreadLive.Index, :index
+    live "/threads/new", ThreadLive.Form, :new
+    live "/threads/:id/edit", ThreadLive.Form, :edit
+
+    live "/threads/:id", ThreadLive.Show, :show
+    live "/threads/:id/comment/:comment_id", ThreadLive.Show, :edit_comment
+    live "/threads/:id/show/edit", ThreadLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.
