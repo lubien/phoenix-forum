@@ -35,7 +35,7 @@
     <div id="comment-<%= comment.id %>">
       <strong>
         <div class="float-right">
-          <span><%= live_patch "Edit", to: Routes.thread_show_path(@socket, :edit_comment, @thread.id, comment.id) %></span>
+          <span><%= live_patch "Edit", to: Routes.thread_show_path(@socket, :edit_comment, @thread.id, comment.id), class: "edit-comment" %></span>
           <span><%= link "Delete", to: "#", phx_click: "delete_comment", phx_value_id: comment.id, data: [confirm: "Are you sure?"] %></span>
         </div>
         <%= comment.author %>

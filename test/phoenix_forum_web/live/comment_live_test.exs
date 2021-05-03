@@ -5,37 +5,44 @@ defmodule PhoenixForumWeb.CommentLiveTest do
 
   alias PhoenixForum.Forum
 
+  @create_thread_attrs %{
+    author: "thread author",
+    content: "thread content",
+    title: "thread title"
+  }
   @create_attrs %{author: "some author", content: "some content"}
   @update_attrs %{author: "some updated author", content: "some updated content"}
   @invalid_attrs %{author: nil, content: nil}
 
-  defp fixture(:comment) do
-    {:ok, comment} = Forum.create_comment(@create_attrs)
+  defp fixture(:thread) do
+    {:ok, thread} = Forum.create_thread(@create_thread_attrs)
+    thread
+  end
+
+  defp fixture(:comment, thread) do
+    attrs = @create_attrs |> Map.put(:thread_id, thread.id)
+    {:ok, comment} = Forum.create_comment(attrs)
     comment
   end
 
   defp create_comment(_) do
-    comment = fixture(:comment)
-    %{comment: comment}
+    thread = fixture(:thread)
+    comment = fixture(:comment, thread)
+    %{comment: comment, thread: thread}
   end
 
   describe "Index" do
     setup [:create_comment]
 
-    test "lists all comments", %{conn: conn, comment: comment} do
-      {:ok, _index_live, html} = live(conn, Routes.comment_index_path(conn, :index))
+    test "lists all comments of a thread", %{conn: conn, comment: comment, thread: thread} do
+      {:ok, _index_live, html} = live(conn, Routes.thread_show_path(conn, :show, thread))
 
-      assert html =~ "Listing Comments"
+      assert html =~ "Replies"
       assert html =~ comment.author
     end
 
-    test "saves new comment", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, Routes.comment_index_path(conn, :index))
-
-      assert index_live |> element("a", "New Comment") |> render_click() =~
-               "New Comment"
-
-      assert_patch(index_live, Routes.comment_index_path(conn, :new))
+    test "saves new comment", %{conn: conn, thread: thread} do
+      {:ok, index_live, _html} = live(conn, Routes.thread_show_path(conn, :show, thread))
 
       assert index_live
              |> form("#comment-form", comment: @invalid_attrs)
@@ -45,19 +52,18 @@ defmodule PhoenixForumWeb.CommentLiveTest do
         index_live
         |> form("#comment-form", comment: @create_attrs)
         |> render_submit()
-        |> follow_redirect(conn, Routes.comment_index_path(conn, :index))
+        |> follow_redirect(conn, Routes.thread_show_path(conn, :show, thread))
 
       assert html =~ "Comment created successfully"
       assert html =~ "some author"
     end
 
-    test "updates comment in listing", %{conn: conn, comment: comment} do
-      {:ok, index_live, _html} = live(conn, Routes.comment_index_path(conn, :index))
+    test "updates comment in listing", %{conn: conn, comment: comment, thread: thread} do
+      {:ok, index_live, _html} = live(conn, Routes.thread_show_path(conn, :show, thread))
 
-      assert index_live |> element("#comment-#{comment.id} a", "Edit") |> render_click() =~
-               "Edit Comment"
+      index_live |> element("#comment-#{comment.id} a", "Edit") |> render_click()
 
-      assert_patch(index_live, Routes.comment_index_path(conn, :edit, comment))
+      assert_patch(index_live, Routes.thread_show_path(conn, :edit_comment, thread, comment))
 
       assert index_live
              |> form("#comment-form", comment: @invalid_attrs)
@@ -67,14 +73,14 @@ defmodule PhoenixForumWeb.CommentLiveTest do
         index_live
         |> form("#comment-form", comment: @update_attrs)
         |> render_submit()
-        |> follow_redirect(conn, Routes.comment_index_path(conn, :index))
+        |> follow_redirect(conn, Routes.thread_show_path(conn, :show, thread))
 
       assert html =~ "Comment updated successfully"
       assert html =~ "some updated author"
     end
 
-    test "deletes comment in listing", %{conn: conn, comment: comment} do
-      {:ok, index_live, _html} = live(conn, Routes.comment_index_path(conn, :index))
+    test "deletes comment in listing", %{conn: conn, comment: comment, thread: thread} do
+      {:ok, index_live, _html} = live(conn, Routes.thread_show_path(conn, :show, thread))
 
       assert index_live |> element("#comment-#{comment.id} a", "Delete") |> render_click()
       refute has_element?(index_live, "#comment-#{comment.id}")
@@ -84,20 +90,12 @@ defmodule PhoenixForumWeb.CommentLiveTest do
   describe "Show" do
     setup [:create_comment]
 
-    test "displays comment", %{conn: conn, comment: comment} do
-      {:ok, _show_live, html} = live(conn, Routes.comment_show_path(conn, :show, comment))
+    test "updates comment within modal", %{conn: conn, comment: comment, thread: thread} do
+      {:ok, show_live, _html} = live(conn, Routes.thread_show_path(conn, :show, thread))
 
-      assert html =~ "Show Comment"
-      assert html =~ comment.author
-    end
+      show_live |> element("#comment-#{comment.id} .edit-comment") |> render_click()
 
-    test "updates comment within modal", %{conn: conn, comment: comment} do
-      {:ok, show_live, _html} = live(conn, Routes.comment_show_path(conn, :show, comment))
-
-      assert show_live |> element("a", "Edit") |> render_click() =~
-               "Edit Comment"
-
-      assert_patch(show_live, Routes.comment_show_path(conn, :edit, comment))
+      assert_patch(show_live, Routes.thread_show_path(conn, :edit_comment, thread, comment))
 
       assert show_live
              |> form("#comment-form", comment: @invalid_attrs)
@@ -107,7 +105,7 @@ defmodule PhoenixForumWeb.CommentLiveTest do
         show_live
         |> form("#comment-form", comment: @update_attrs)
         |> render_submit()
-        |> follow_redirect(conn, Routes.comment_show_path(conn, :show, comment))
+        |> follow_redirect(conn, Routes.thread_show_path(conn, :show, thread))
 
       assert html =~ "Comment updated successfully"
       assert html =~ "some updated author"
