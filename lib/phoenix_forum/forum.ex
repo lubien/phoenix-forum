@@ -34,14 +34,15 @@ defmodule PhoenixForum.Forum do
   def list_threads_with_comment_count do
     count_query =
       from c in Comment,
-      select: %{ thread_id: c.thread_id, count: count(c.id) },
-      group_by: [c.thread_id]
+        select: %{thread_id: c.thread_id, count: count(c.id)},
+        group_by: [c.thread_id]
 
     query =
       from t in Thread,
-      left_join: sub in subquery(count_query),
-      on: sub.thread_id == t.id,
-      select: %{ thread: t, comment_count: coalesce(sub.count, 0) }
+        left_join: sub in subquery(count_query),
+        on: sub.thread_id == t.id,
+        select: %{thread: t, comment_count: coalesce(sub.count, 0)},
+        order_by: t.id
 
     Repo.all(query)
   end
